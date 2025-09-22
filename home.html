@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Write Smarter with AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background: #0d1117;
+    color: #c9d1d9;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .logo {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #58a6ff;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #58a6ff, #1f6feb);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 900;
+    font-family: monospace;
+    box-shadow: 0 0 12px #58a6ff88;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 720px;
+    margin: 80px auto 0;
+    padding: 0 20px 40px 20px;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 3.8rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(90deg, #58a6ff, #1f6feb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    user-select: none;
+  }
+
+  p.subtext {
+    font-size: 1.3rem;
+    margin-bottom: 3rem;
+    color: #8b949e;
+    user-select: none;
+  }
+
+  .typing-effect {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: #58a6ff;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: nowrap;
+    border-right: 3px solid #58a6ff;
+    overflow: hidden;
+    min-height: 42px;
+    margin-bottom: 4rem;
+    user-select: none;
+  }
+
+  .chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  #chat-box {
+    background: #161b22cc;
+    border-radius: 12px;
+    padding: 16px;
+    overflow-y: auto;
+    color: white;
+    text-align: left;
+    font-size: 1rem;
+    box-shadow: 0 0 20px #58a6ff88;
+    min-height: 300px;
+    max-height: 60vh;
+    margin-bottom: 10px;
+  }
+
+  .msg {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 12px;
+    max-width: 80%;
+  }
+
+  .msg.user {
+    background: #238636cc;
+    align-self: flex-end;
+    color: #d1e7dd;
+    margin-left: auto;
+  }
+
+  .msg.ai {
+    background: #fd01ecdd;
+    align-self: flex-start;
+  }
+
+  #input-container {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    position: relative;
+    bottom: 0;
+    background: transparent;
+  }
+
+  #input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 9999px;
+    border: none;
+    font-size: 1.1rem;
+    outline: none;
+  }
+
+  #send-btn {
+    background: #58a6ff;
+    border: none;
+    border-radius: 9999px;
+    padding: 12px 24px;
+    color: #0d1117;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgb(88 166 255 / 0.4);
+    transition: background 0.3s ease;
+  }
+
+  #send-btn:hover {
+    background: #1f6feb;
+  }
+
+  #neuralCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    background: #0d1117;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <div class="logo-icon">AI</div>
+  WriteSmarter
+</div>
+
+<div class="container">
+  <h1>Write Smarter with AI</h1>
+  <p class="subtext">Your intelligent writing assistant for ideas, corrections, and creativity.</p>
+  <div class="typing-effect" id="typing"></div>
+
+  <div class="chat-wrapper">
+    <div id="chat-box"></div>
+    <div id="input-container">
+      <input type="text" id="input" placeholder="Type your message here..." autocomplete="off" />
+      <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="neuralCanvas"></canvas>
+
+<script>
+  const lines = [
+    "Need ideas? Just ask!",
+    "Want corrections? I can help.",
+    "Looking for creativity boost?",
+    "Write with confidence!"
+  ];
+
+  const typingElement = document.getElementById('typing');
+  const typingSpeed = 70;
+  const erasingSpeed = 40;
+  const delayBetweenLines = 2000;
+
+  let lineIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  function type() {
+    if (lineIndex >= lines.length) lineIndex = 0;
+
+    const currentLine = lines[lineIndex];
+
+    if (!isDeleting) {
+      typingElement.textContent = currentLine.substring(0, charIndex + 1);
+      charIndex++;
+      if (charIndex === currentLine.length) {
+        isDeleting = true;
+        setTimeout(type, delayBetweenLines);
+      } else {
+        setTimeout(type, typingSpeed);
+      }
+    } else {
+      typingElement.textContent = currentLine.substring(0, charIndex - 1);
+      charIndex--;
+      if (charIndex === 0) {
+        isDeleting = false;
+        lineIndex++;
+        setTimeout(type, typingSpeed);
+      } else {
+        setTimeout(type, erasingSpeed);
+      }
+    }
+  }
+
+  type();
+
+  const canvas = document.getElementById('neuralCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let width, height;
+
+  class Node {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = (Math.random() - 0.5) * 0.5;
+    }
+    move() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > width) this.vx = -this.vx;
+      if (this.y < 0 || this.y > height) this.vy = -this.vy;
+    }
+  }
+
+  let nodes = [];
+  const numNodes = 50;
+  const maxDistance = 150;
+
+  function init() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    nodes = [];
+    for (let i = 0; i < numNodes; i++) {
+      nodes.push(new Node(Math.random() * width, Math.random() * height));
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+
+    nodes.forEach(node => {
+      node.move();
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(88, 166, 255, 0.8)';
+      ctx.shadowColor = '#58a6ff';
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    for (let i = 0; i < numNodes; i++) {
+      for (let j = i + 1; j < numNodes; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < maxDistance) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(88, 166, 255, ${1 - dist / maxDistance})`;
+          ctx.lineWidth = 1;
+          ctx.shadowColor = '#58a6ff';
+          ctx.shadowBlur = 10;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', init);
+  init();
+  draw();
+
+  async function sendMessage() {
+    const input = document.getElementById("input");
+    const messagesDiv = document.getElementById("chat-box");
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    messagesDiv.innerHTML += `<div class="msg user">You: ${userMessage}</div>`;
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    input.value = "";
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
+      });
+      const data = await response.json();
+
+      messagesDiv.innerHTML += `<div class="msg ai">AI: ${data.reply}</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    } catch (error) {
+      messagesDiv.innerHTML += `<div class="msg ai">AI: Sorry, there was an error.</div>`;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+  }
+
+  document.getElementById("input")
+    .addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+</script>
+
+</body>
+</html>

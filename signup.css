@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+body {
+  margin: 0;
+  background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+  color: #eee;
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  width: 320px;
+  text-align: center;
+}
+
+#main-heading {
+  font-weight: 700;
+  font-size: 2.6em;
+  min-height: 48px;
+  margin-bottom: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 3px solid #76e3ea; /* Cursor effect */
+  animation: blink-caret 0.8s step-end infinite;
+}
+
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #76e3ea;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input {
+  padding: 12px 15px;
+  background: #222;
+  border: 2px solid #444;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #eee;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus {
+  border-color: #76e3ea;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px;
+  background: #667eea;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #764ba2;
+}

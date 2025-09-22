@@ -1,0 +1,134 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #667eea;
+  background: linear-gradient(120deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+header {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+.glow-gradient {
+  position: relative;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 3em;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #56eee9 20%, #d36479 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  text-align: center;
+  filter: drop-shadow(0 0 12px #764ba2b3);
+  animation: glow 1.2s ease-in-out infinite alternate;
+  overflow: hidden;
+}
+
+/* Silver glare effect */
+.glow-gradient::after {
+  content: '';
+  position: absolute;
+  left: -50%;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-20deg);
+  filter: blur(1px);
+  animation: glareMove 2.5s linear infinite;
+}
+
+@keyframes glareMove {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+@keyframes glow {
+  to {
+    filter: drop-shadow(0 0 28px #764ba2);
+  }
+}
+
+.subtitle {
+  margin-top: 18px;
+  font-size: 1.3em;
+  color: #fff;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.try-box {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.try-btn {
+  padding: 18px 55px;
+  font-size: 1.3em;
+  border: 3px solid #764ba2;
+  background: transparent;
+  color: #fff;
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 8px #667eea75;
+  transition: box-shadow 0.3s, background 0.2s;
+}
+
+.try-btn:hover {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 0 30px #764ba2cc;
+  color: #fff;
+}
+
+.signup-txt {
+  margin-top: 13px;
+  color: #fff;
+  font-size: 1.12em;
+  letter-spacing: 1px;
+  font-family: Arial, sans-serif;
+}
+
+.free {
+  font-weight: 800;
+  color: #76e3ea;
+  margin-left: 2px;
+  text-shadow: 0 0 8px #76e3ea88;
+}
+
+/* Remove animated neural network lines for clarity. 
+If you want lines, restore this section with your effect/gif */
